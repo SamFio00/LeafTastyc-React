@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './SearchBar.scss';
 
 function SearchBar() {
   const [query, setQuery] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSearch = (e) => {
     e.preventDefault();
-    console.log('Searching:', query);
-    // In seguito qui faremo navigazione verso /results
+    if (!query) return;
+    navigate(`/results?query=${encodeURIComponent(query)}`);
   };
 
   return (
-    <form className="search-bar" onSubmit={handleSubmit}>
+    <form className={"search-bar ${className}" } onSubmit={handleSearch}>
       <input
         type="text"
         placeholder="Search vegetarian recipes..."
