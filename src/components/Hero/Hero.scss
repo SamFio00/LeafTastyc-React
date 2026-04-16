@@ -2,7 +2,7 @@
 
 .hero {
   position: relative;
-  height: 80vh;
+  height: 100vh;
   background-image: url('../../assets/images/hero1.jpg');
   background-size: cover;
   background-position: center;
@@ -26,23 +26,54 @@
     align-items: flex-start;
     padding: 0 2rem;
     width: 100%;
-    
-    .search-bar {
-      width: 100%;
+  }
+  
+  .hero-scroll-btn {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background-color: $main-color;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    transition: all 0.3s ease;
+    animation: bounce 1.5s infinite;
+  }
+
+  .hero-scroll-btn:hover {
+    transform: translateX(-50%) translateY(-3px);
+  }
+
+  @keyframes bounce {
+    0%, 100% {
+      transform: translate(-50%, 0);
+    }
+    50% {
+      transform: translate(-50%, 8px);
     }
   }
+
 }
+
 
 @media (max-width: 768px) {
   .hero {
-    height: 80vh;
+    height: 100vh;
 
     .hero-content {
       align-items: center;
       padding: 0 1rem;
 
       img {
-        transform: scale(0.7); // Meno drastico che 0.5
+        transform: scale(0.7);
         margin-bottom: 1.5rem;
       }
     }
@@ -60,28 +91,16 @@
 
 @media (max-width: 480px) {
   .hero {
-    .hero-content {
-      padding: 0 0.5rem;
+    .hero-content{
+      transform: translateY(-80px);
+      align-items: center;
+      padding: 0 1rem;
 
       img {
         transform: scale(0.5);
-        margin-bottom: 1rem;
+        margin-bottom: 0.5rem;
       }
     }
-
-    .search-bar-hero {
-      max-width: none;
-      width: 100%;
-
-      input {
-        font-size: 0.95rem;
-        padding: 0.6rem 0.8rem;
-      }
-
-      button {
-        font-size: 0.95rem;
-        padding: 0.6rem 1rem;
-      }
-    }
+    
   }
 }

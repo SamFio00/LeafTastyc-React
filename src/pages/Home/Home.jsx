@@ -1,36 +1,47 @@
 import React from 'react';
 import Hero from '../../components/Hero/Hero';
-import './Home.scss'; 
-import recipe1 from '../../assets/images/fake-recipe.jpg';
-import recipe2 from '../../assets/images/fake-recipe.jpg';
-import recipe3 from '../../assets/images/fake-recipe.jpg';
+import RecipeCard from '../../components/RecipeCard/RecipeCard';
+import './Home.scss';
+import { useEffect, useState } from 'react';
+import { getRandomRecipes } from '../../api/recipes';
+import { getCache, setCache } from '../../utils/cache'; 
+
 function Home() {
+
+    const [recipes, setRecipes] = useState([]);
+
+    const CACHE_KEY = 'home-random-recipes';
+    const CACHE_TIME = 60 * 60 * 1000;
+
+    useEffect(() => {
+  const fetchRecipes = async () => {
+    const cached = getCache(CACHE_KEY, CACHE_TIME);
+
+        if (cached) {
+        setRecipes(cached);
+        return;
+        }
+
+        const data = await getRandomRecipes();
+
+        setRecipes(data);
+        setCache(CACHE_KEY, data);
+    };
+
+    fetchRecipes();
+    }, []);
+    
   return (
     <div className="home">
 
       <Hero />
 
-      <section className="ideas-section">
+      <section id="ideas" className="ideas-section">
         <h2>Some Ideas</h2>
         <div className="ideas-grid">
-        <div className="recipe-card">
-            
-            <img src={recipe1} alt="Recipe 1" />
-            <h3><i className="fa-solid fa-plate-wheat"></i> Veggie Burger</h3>
-            <button>See Details →</button>
-        </div>
-
-        <div className="recipe-card">
-            <img src={recipe2} alt="Recipe 2" />
-            <h3>Quinoa Salad</h3>
-            <button>See Details →</button>
-        </div>
-
-        <div className="recipe-card">
-            <img src={recipe3} alt="Recipe 3" />
-            <h3>Vegan Pancakes</h3>
-            <button>See Details →</button>
-        </div>
+          {recipes.map((recipe) => (
+            <RecipeCard key={recipe.id} recipe={recipe} />
+          ))}
         </div>
       </section>
     </div>

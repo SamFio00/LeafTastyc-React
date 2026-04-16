@@ -7,11 +7,15 @@ function Navbar() {
   return (
     <nav className="navbar">
 
+        <div className="nav-logo">
         <Link to="/" >
         <img src={logo} alt="logo LeafTastyc" />
         </Link>
+        </div>
 
+        <div className="nav-search-bar">
         <SearchBar />
+        </div>
 
     </nav>
   );

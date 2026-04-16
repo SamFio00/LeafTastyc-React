@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { searchRecipes } from '../../api/recipes';
+import { getCache, setCache } from '../../utils/cache';
 import RecipeCard from '../../components/RecipeCard/RecipeCard';
 import Navbar from '../../components/Navbar/Navbar';
 import './Results.scss';
@@ -11,45 +12,109 @@ function Results() {
   const query = queryParams.get('query') || '';
 
   const [recipes, setRecipes] = useState([]);
+  const [offset, setOffset] = useState(0);
+
+  const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
     const fetchRecipes = async () => {
-      const results = await searchRecipes(query, 10);
+      const CACHE_KEY = `results_${query}_0`;
+      const CACHE_TIME = 60 * 60 * 1000;
+
+      const cached = getCache(CACHE_KEY, CACHE_TIME);
+      if (cached) {
+        setRecipes(cached);
+        setOffset(10);
+        setHasMore(cached.length >= 10);
+        return;
+      }
+
+      setLoading(true);
+
+      const results = await searchRecipes(query, 10, 0);
+
       setRecipes(results);
+      setOffset(10);
+      setHasMore(results.length >= 10);
+
+      setCache(CACHE_KEY, results);
+
+      setLoading(false);
     };
+
     if (query) fetchRecipes();
   }, [query]);
 
+  const loadMore = async () => {
+    const CACHE_KEY = `results_${query}_${offset}`;
+    const CACHE_TIME = 60 * 60 * 1000;
+
+    const cached = getCache(CACHE_KEY, CACHE_TIME);
+
+    if (cached) {
+      setRecipes((prev) => [...prev, ...cached]);
+      setOffset((prev) => prev + 10);
+      setHasMore(cached.length >= 10);
+      return;
+    }
+
+    setLoadingMore(true);
+
+    const moreRecipes = await searchRecipes(query, 10, offset);
+
+    setRecipes((prev) => [...prev, ...moreRecipes]);
+    setOffset((prev) => prev + 10);
+    setHasMore(moreRecipes.length >= 10);
+
+    setCache(CACHE_KEY, moreRecipes);
+
+    setLoadingMore(false);
+  };
+
   return (
     <>
-    <Navbar />
-    <div className='lorem-example'>
-      <h1>Lorem ipsum dolor sit amet</h1>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis libero dolor error asperiores minima quibusdam dignissimos veniam optio, laborum ab eligendi distinctio! Eveniet unde eligendi aperiam magni ducimus dolore ipsam.</p>
-      <img src="https://picsum.photos/200/300" alt="placeholder from internet" />
-      <img src="https://picsum.photos/200/300" alt="placeholder from internet" />
-      <img src="https://picsum.photos/200/300" alt="placeholder from internet" />
-      <img src="https://picsum.photos/200/300" alt="placeholder from internet" />
-      <img src="https://picsum.photos/200/300" alt="placeholder from internet" />
-      <img src="https://picsum.photos/200/300" alt="placeholder from internet" />
-      <img src="https://picsum.photos/200/300" alt="placeholder from internet" />
-      <img src="https://picsum.photos/200/300" alt="placeholder from internet" />
-      </div>
-    <div className="results">
-      <h2>Results for: {query}</h2>
-      <div className="results-list">
-        {recipes.length > 0 ? (
-          recipes.map((recipe) => (
-            <RecipeCard key={recipe.id} recipe={recipe} />
-          ))
-        ) : (
-        <div className="no-results">
-          <i className="fa-solid fa-triangle-exclamation"></i>
-          <p>No recipes found.</p>
+      <Navbar />
+
+      <div className="results">
+        <h2>Results for: <em>{query}</em></h2>
+
+        <div className="results-list">
+          {loading ? (
+            <div className="loader"></div>
+          ) : recipes.length > 0 ? (
+            recipes.map((recipe) => (
+              <RecipeCard key={recipe.id} recipe={recipe} />
+            ))
+          ) : (
+            <div className="no-results">
+              <i className="fa-solid fa-triangle-exclamation"></i>
+              <p>No recipes found.</p>
+            </div>
+          )}
         </div>
+
+        {!loading && recipes.length > 0 && hasMore && (
+          <button
+            className="load-more"
+            onClick={loadMore}
+            disabled={loadingMore}
+          >
+            {loadingMore ? (
+              'Loading...'
+            ) : (
+              <>
+                Load more <i className="fa-solid fa-arrow-down"></i>
+              </>
+            )}
+          </button>
+        )}
+
+        {!hasMore && !loading && recipes.length > 0 && (
+          <h2 className="end-message">No more recipes</h2>
         )}
       </div>
-    </div>
     </>
   );
 }
