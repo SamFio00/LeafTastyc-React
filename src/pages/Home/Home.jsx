@@ -1,47 +1,64 @@
-import React from 'react';
 import Hero from '../../components/Hero/Hero';
 import RecipeCard from '../../components/RecipeCard/RecipeCard';
 import './Home.scss';
 import { useEffect, useState } from 'react';
 import { getRandomRecipes } from '../../api/recipes';
-import { getCache, setCache } from '../../utils/cache'; 
+import { getCache, setCache } from '../../utils/cache';
+
+const CACHE_KEY = 'home-random-recipes';
+const CACHE_TIME = 60 * 60 * 1000;
 
 function Home() {
+  const [recipes, setRecipes] = useState([]);
 
-    const [recipes, setRecipes] = useState([]);
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      const cached = getCache(CACHE_KEY, CACHE_TIME);
 
-    const CACHE_KEY = 'home-random-recipes';
-    const CACHE_TIME = 60 * 60 * 1000;
-
-    useEffect(() => {
-  const fetchRecipes = async () => {
-    const cached = getCache(CACHE_KEY, CACHE_TIME);
-
-        if (cached) {
+      if (cached) {
         setRecipes(cached);
         return;
-        }
+      }
 
+      try {
         const data = await getRandomRecipes();
 
         setRecipes(data);
+
         setCache(CACHE_KEY, data);
+        setCache('last-recipes', data);
+      } catch (err) {
+        console.error('Random recipes error:', err);
+        const fallback = getCache(CACHE_KEY, CACHE_TIME * 10);
+        const lastGood = getCache('last-recipes', CACHE_TIME * 24);
+
+        const finalData = fallback || lastGood;
+
+        setRecipes(finalData ? finalData : []);
+      }
     };
 
     fetchRecipes();
-    }, []);
-    
+  }, []);
+
   return (
     <div className="home">
-
       <Hero />
 
       <section id="ideas" className="ideas-section">
         <h2>Some Ideas</h2>
+
         <div className="ideas-grid">
-          {recipes.map((recipe) => (
+          {recipes.length > 0 ? (
+            recipes.map((recipe) => (
             <RecipeCard key={recipe.id} recipe={recipe} />
-          ))}
+          ))
+          ) : (
+            <div className="empty-state">
+            <p>No recipes found</p>
+            </div>
+          )
+          }
         </div>
       </section>
     </div>
