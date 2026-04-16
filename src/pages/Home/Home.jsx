@@ -27,8 +27,8 @@ function Home() {
 
         setCache(CACHE_KEY, data);
         setCache('last-recipes', data);
-      } catch (err) {
-        console.error('Random recipes error:', err);
+      } catch {
+
         const fallback = getCache(CACHE_KEY, CACHE_TIME * 10);
         const lastGood = getCache('last-recipes', CACHE_TIME * 24);
 
@@ -55,7 +55,7 @@ function Home() {
           ))
           ) : (
             <div className="empty-state">
-            <p>No recipes found</p>
+            <p>No recipes found. Spoonacular credits expired. Try again later</p>
             </div>
           )
           }
