@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './SearchBar.scss';
 
-import { autocompleteRecipes } from '../../api/recipes';
+import { searchRecipes } from '../../api/recipes';
 import { getCache, setCache } from '../../utils/cache';
 
 function SearchBar() {
@@ -46,7 +46,7 @@ function SearchBar() {
         return;
       }
 
-      const data = await autocompleteRecipes(trimmed);
+      const data = await searchRecipes(trimmed, 5);
 
       if (!active) return;
 
@@ -89,19 +89,15 @@ function SearchBar() {
         </button>
 
         {suggestions.length > 0 && (
-        <ul className="suggestions">
-          {suggestions.map((item) => (
-            <li key={item.id} onClick={() => handleSelect(item.title)}>
-              {item.title}
-            </li>
-          ))}
-        </ul>
+          <ul className="suggestions">
+            {suggestions.map((item) => (
+              <li key={item.id} onClick={() => handleSelect(item.title)}>
+                {item.title}
+              </li>
+            ))}
+          </ul>
         )}
-
       </form>
-
-
-
     </div>
   );
 }

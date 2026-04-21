@@ -1,4 +1,3 @@
-
 import SearchBar from "../SearchBar/SearchBar";
 import logo from "../../assets/icons/logo.svg";
 import "./Hero.scss";

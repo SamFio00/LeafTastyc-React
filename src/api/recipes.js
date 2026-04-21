@@ -1,13 +1,17 @@
 import axios from 'axios';
 
-const API_KEY = '50287f47cda14617859ec1dc6fd626fd';
-const BASE_URL = 'https://api.spoonacular.com/recipes';
+const api = axios.create({
+  baseURL: 'https://api.spoonacular.com/recipes',
+  params: {
+    apiKey: import.meta.env.VITE_API_KEY,
+  },
+});
 
+//SEARCH RECIPES
 export const searchRecipes = async (query, number = 10, offset = 0) => {
   try {
-    const res = await axios.get(`${BASE_URL}/complexSearch`, {
+    const { data } = await api.get('/complexSearch', {
       params: {
-        apiKey: API_KEY,
         query,
         diet: 'vegetarian',
         number,
@@ -16,52 +20,37 @@ export const searchRecipes = async (query, number = 10, offset = 0) => {
       },
     });
 
-    return res.data.results;
-  } catch (err) {
-    console.error('Search error:', err);
+    return data.results || [];
+  } catch (error) {
+    console.error('Search error:', error);
     return [];
   }
 };
 
-
+//DETAILS
 export const getRecipeDetails = async (id) => {
   try {
-    const res = await axios.get(`${BASE_URL}/${id}/information`, {
-      params: {
-        apiKey: API_KEY,
-      },
-    });
-
-    return res.data;
-  } catch (err) {
-    console.error('Details error:', err);
+    const { data } = await api.get(`/${id}/information`);
+    return data;
+  } catch (error) {
+    console.error('Details error:', error);
     return null;
   }
 };
 
+//RANDOM
 export const getRandomRecipes = async () => {
-  const res = await axios.get(`${BASE_URL}/random`, {
-    params: {
-      apiKey: API_KEY,
-      number: 3,
-      tags: 'vegetarian',
-    },
-  });
+  try {
+    const { data } = await api.get('/random', {
+      params: {
+        number: 3,
+        tags: 'vegetarian',
+      },
+    });
 
-  return res.data.recipes;
-
-};
-
-export const autocompleteRecipes = async (query) => {
-  if (!query) return [];
-
-  const res = await axios.get(`${BASE_URL}/autocomplete`, {
-    params: {
-      apiKey: API_KEY,
-      query,
-      number: 5,
-    },
-  });
-
-  return res.data;
+    return data.recipes || [];
+  } catch (error) {
+    console.error('Random error:', error);
+    return [];
+  }
 };
