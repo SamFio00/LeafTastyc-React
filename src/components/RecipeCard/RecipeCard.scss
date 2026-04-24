@@ -9,16 +9,11 @@
       align-items: stretch;
       opacity: 0;
       animation: fadeUp 0.5s ease-in-out forwards;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
 
-      @keyframes fadeUp {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
       }
 
       img {
@@ -43,6 +38,11 @@
             font-size: 0.9rem;
             color: $secondary-color;
             margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
       button {
@@ -64,6 +64,17 @@
       }
     }
    }
+
+  @keyframes fadeUp {
+      from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+      to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+  }
 
    /* RESPONSIVE STYLES */
    @media screen and (max-width: 768px) {

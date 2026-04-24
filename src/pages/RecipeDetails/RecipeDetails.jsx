@@ -1,186 +1,180 @@
 import "./RecipeDetails.scss";
 import Navbar from "../../components/Navbar/Navbar";
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { getRecipeDetails } from "../../api/recipes";
-import { getCache, setCache } from "../../utils/cache";
+import { useState } from "react";
+import { useRecipeDetails } from "../../hooks/useRecipeDetails";
 
 const RecipeDetails = () => {
-    const { id } = useParams();
-    const [recipe, setRecipe] = useState(null);
+  const { id } = useParams();
 
-    const [loading, setLoading] = useState(true);
-    const [checkedItems, setCheckedItems] = useState([]);
+  const { recipe, loading, error } = useRecipeDetails(id);
 
-    const toggleItem = (id) => {
-        setCheckedItems((prev) => ({
-            ...prev,
-            [id]: !prev[id],
-        }));
-    };
+  const [checkedItems, setCheckedItems] = useState({});
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const CACHE_KEY = `recipe_${id}`;
-            const CACHE_TIME = 60 * 60 * 1000 * 24;
+  const toggleItem = (id) => {
+    setCheckedItems((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
 
-            setLoading(true);
-
-            const cached = getCache(CACHE_KEY, CACHE_TIME);
-            if (cached) {
-                setRecipe(cached);
-                setLoading(false);
-                return;
-            }
-
-            const data = await getRecipeDetails(id);
-            
-            setRecipe(data);
-            setCache(CACHE_KEY, data);
-
-            setLoading(false);
-        };
-        fetchData();
-    }, [id]);
-
-
-        if (loading) {
-            return(
-            <>
-            <Navbar />
-            <div className="loader"></div>
-            </>
-            )
-        }
-
-        if (!recipe) {
-            return(
-            <>
-            <Navbar />
-            <div className="error-recipe-details">
-                <i className="fa-solid fa-triangle-exclamation"></i>
-                <p>Recipe details failed to load</p>
-            </div>
-            </>
-            )
-        };
-
+  if (loading) {
     return (
-        <>
+      <>
         <Navbar />
-            <div className="recipe-details">
+        <div className="loader"></div>
+      </>
+    );
+  }
 
-                <button className="back-btn" onClick={() => window.history.back()}>
-                <i className="fa-solid fa-arrow-left"></i>
-                </button>
+  if (error || !recipe) {
+    return (
+      <>
+        <Navbar />
+        <div className="error-recipe-details">
+          <i className="fa-solid fa-triangle-exclamation"></i>
+          <p>Recipe details failed to load</p>
+        </div>
+      </>
+    );
+  }
 
-                <div className="hero-image">
-                <img src={recipe.image} alt={recipe.title} />
-                <div className="image-overlay"></div>
-                <div className="badges-overlay">
-                    <span><i className="fa-solid fa-utensils"></i> {recipe.servings}</span>
-                    <span><i className="fa-solid fa-clock"></i> {recipe.readyInMinutes} min</span>
+  return (
+    <>
+      <Navbar />
 
-                    {recipe.pricePerServing && (
-                    <span><i className="fa-solid fa-coins"></i> {(recipe.pricePerServing / 100).toFixed(2)}€</span>
-                    )}
+      <div className="recipe-details">
+        <button
+          className="back-btn"
+          onClick={() => window.history.back()}
+        >
+          <i className="fa-solid fa-arrow-left"></i>
+        </button>
 
-                    {recipe.spoonacularScore && (
-                    <span><i className="fa-solid fa-star"></i> {Math.round(recipe.spoonacularScore)}</span>
-                    )}
-                </div>
+        <div className="hero-image">
+          <img src={recipe.image} alt={recipe.title} />
+          <div className="image-overlay"></div>
 
+          <div className="badges-overlay">
+            <span>
+              <i className="fa-solid fa-utensils"></i> {recipe.servings}
+            </span>
 
-                </div>
+            <span>
+              <i className="fa-solid fa-clock"></i>{" "}
+              {recipe.readyInMinutes} min
+            </span>
 
-                <h1 className="title">{recipe.title}</h1>
+            {recipe.pricePerServing && (
+              <span>
+                <i className="fa-solid fa-coins"></i>{" "}
+                {(recipe.pricePerServing / 100).toFixed(2)}€
+              </span>
+            )}
 
-                <p className="summary">
-                {recipe.summary?.replace(/<[^>]+>/g, '')}
-                </p>
+            {recipe.spoonacularScore && (
+              <span>
+                <i className="fa-solid fa-star"></i>{" "}
+                {Math.round(recipe.spoonacularScore)}
+              </span>
+            )}
+          </div>
+        </div>
 
-                <div className="grid">
-                    <div className="ingredients">
-                        <h2>Ingredients</h2>
-                            <ul className="ingredients-list">
-                            {recipe.extendedIngredients?.map((ing) => {
-                                const isChecked = checkedItems[ing.id];
+        <h1 className="title">{recipe.title}</h1>
 
-                                return (
-                                <li
-                                    key={ing.id}
-                                    className={isChecked ? "checked" : ""}
-                                    onClick={() => toggleItem(ing.id)}
-                                >
-                                    <div className="checkbox">
-                                    <i className="fa-solid fa-check"></i>
-                                    </div>
+        <p className="summary">
+          {recipe.summary?.replace(/<[^>]+>/g, "")}
+        </p>
 
-                                    <span className="text">
-                                    {ing.original}
-                                    </span>
-                                </li>
-                                );
-                            })}
-                            </ul>
+        <div className="grid">
+          <div className="ingredients">
+            <h2>Ingredients</h2>
+
+            <ul className="ingredients-list">
+              {recipe.extendedIngredients?.map((ing) => {
+                const isChecked = checkedItems[ing.id];
+
+                return (
+                  <li
+                    key={ing.id}
+                    className={isChecked ? "checked" : ""}
+                    onClick={() => toggleItem(ing.id)}
+                  >
+                    <div className="checkbox">
+                      <i className="fa-solid fa-check"></i>
                     </div>
 
-                <div className="info-box">
-                <h2>Quick Info</h2>
+                    <span className="text">
+                      {ing.original}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
 
-                <p><i className="fa-solid fa-heart"></i> Health Score: {recipe.healthScore}</p>
+          <div className="info-box">
+            <h2>Quick Info</h2>
 
-                <p>
-                    <i className="fa-solid fa-dumbbell"></i> Nutrition Level: {
-                    recipe.healthScore > 80
-                        ? "Excellent"
-                        : recipe.healthScore > 60
-                        ? "Good"
-                        : "Average"
-                    }
-                </p>
+            <p>
+              <i className="fa-solid fa-heart"></i> Health Score:{" "}
+              {recipe.healthScore}
+            </p>
 
-                <p>
-                    <i className="fa-solid fa-scale-balanced"></i> Fat Level: {
-                    recipe.veryHealthy ? "Low" : "Moderate"
-                    }
-                </p>
+            <p>
+              <i className="fa-solid fa-dumbbell"></i> Nutrition Level:{" "}
+              {recipe.healthScore > 80
+                ? "Excellent"
+                : recipe.healthScore > 60
+                ? "Good"
+                : "Average"}
+            </p>
 
-                <p>
-                    <i className="fa-solid fa-leaf"></i> Diet Type: {
-                    recipe.vegan ? "Vegan"
-                    : recipe.dairyFree ? "Dairy Free"
-                    : "Vegetarian"
-                    }
-                </p>
+            <p>
+              <i className="fa-solid fa-scale-balanced"></i> Fat Level:{" "}
+              {recipe.veryHealthy ? "Low" : "Moderate"}
+            </p>
 
-                {recipe.glutenFree && <p><i className="fa-solid fa-circle-info"></i> Gluten Free</p>}
+            <p>
+              <i className="fa-solid fa-leaf"></i> Diet Type:{" "}
+              {recipe.vegan
+                ? "Vegan"
+                : recipe.dairyFree
+                ? "Dairy Free"
+                : "Vegetarian"}
+            </p>
 
-                <p>
-                    <i className="fa-solid fa-stairs"></i> Difficulty: {
-                    recipe.readyInMinutes < 20
-                        ? "Easy"
-                        : recipe.readyInMinutes < 50
-                        ? "Medium"
-                        : "Hard"
-                    }
-                </p>
-                </div>
-                </div>
+            {recipe.glutenFree && (
+              <p>
+                <i className="fa-solid fa-circle-info"></i> Gluten Free
+              </p>
+            )}
 
-                <div className="instructions">
-                <h2>Instructions</h2>
-                <div
-                    className="instructions-content"
-                    dangerouslySetInnerHTML={{
-                    __html: recipe.instructions,
-                    }}
-                />
-                </div>
+            <p>
+              <i className="fa-solid fa-stairs"></i> Difficulty:{" "}
+              {recipe.readyInMinutes < 20
+                ? "Easy"
+                : recipe.readyInMinutes < 50
+                ? "Medium"
+                : "Hard"}
+            </p>
+          </div>
+        </div>
 
-            </div>
-        </>
-    );
+        <div className="instructions">
+          <h2>Instructions</h2>
+
+          <div
+            className="instructions-content"
+            dangerouslySetInnerHTML={{
+              __html: recipe.instructions,
+            }}
+          />
+        </div>
+      </div>
+    </>
+  );
 };
 
 export default RecipeDetails;

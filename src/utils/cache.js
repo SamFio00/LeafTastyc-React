@@ -1,20 +1,27 @@
 export const getCache = (key, maxAge) => {
-    const cached = localStorage.getItem(key);
+  const cached = localStorage.getItem(key);
+  if (!cached) return null;
 
-    if (!cached) return null;
+  let parsed;
 
-    const parsed = JSON.parse(cached || '{}');
+  try {
+    parsed = JSON.parse(cached);
+  } catch {
+    localStorage.removeItem(key);
+    return null;
+  }
 
-    const isExpired = Date.now() - parsed.timestamp > maxAge;
+  if (maxAge && Date.now() - parsed.timestamp > maxAge) {
+    localStorage.removeItem(key);
+    return null;
+  }
 
-    if (isExpired) {
-        localStorage.removeItem(key);
-        return null;
-    }
-
-    return parsed.data;
+  return parsed.data;
 };
 
 export const setCache = (key, data) => {
-    localStorage.setItem(key, JSON.stringify({ data, timestamp: Date.now() }));
+  localStorage.setItem(
+    key,
+    JSON.stringify({ data, timestamp: Date.now() })
+  );
 };

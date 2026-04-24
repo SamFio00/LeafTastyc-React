@@ -3,6 +3,7 @@
 .hero {
   position: relative;
   height: 100vh;
+  background-color: #111; /* Fallback color */
   background-image: url('../../assets/images/hero1.jpg');
   background-size: cover;
   background-position: center;

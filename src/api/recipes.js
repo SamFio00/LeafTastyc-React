@@ -27,6 +27,23 @@ export const searchRecipes = async (query, number = 10, offset = 0) => {
   }
 };
 
+//SUGGESTIONS
+export const getSuggestions = async (query) => {
+  try {
+    const { data } = await api.get('/autocomplete', {
+      params: {
+        query,
+        number: 5,
+      },
+    });
+
+    return data || [];
+  } catch (error) {
+    console.error('Suggestions error:', error);
+    return [];
+  }
+};
+
 //DETAILS
 export const getRecipeDetails = async (id) => {
   try {

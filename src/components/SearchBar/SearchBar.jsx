@@ -1,13 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './SearchBar.scss';
-
-import { searchRecipes } from '../../api/recipes';
-import { getCache, setCache } from '../../utils/cache';
+import { useDebouncedSearch } from '../../hooks/useDebouncedSearch';
 
 function SearchBar() {
   const [query, setQuery] = useState('');
-  const [suggestions, setSuggestions] = useState([]);
+
+  const { suggestions, loading } = useDebouncedSearch(query);
 
   const navigate = useNavigate();
 
@@ -15,57 +14,16 @@ function SearchBar() {
     e.preventDefault();
     if (!query.trim()) return;
 
-    setSuggestions([]);
-    navigate(`/results?query=${encodeURIComponent(query)}`);
+    navigate(`/results?query=${encodeURIComponent(query.trim())}`);
   };
 
   const clearSearch = () => {
     setQuery('');
-    setSuggestions([]);
   };
-
-  useEffect(() => {
-    const trimmed = query.trim();
-
-    if (!trimmed) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setSuggestions([]);
-      return;
-    }
-
-    let active = true;
-
-    const fetchSuggestions = async () => {
-      const key = `auto_${trimmed.toLowerCase()}`;
-      const maxAge = 1000 * 60 * 60;
-
-      const cached = getCache(key, maxAge);
-
-      if (cached && active) {
-        setSuggestions(cached);
-        return;
-      }
-
-      const data = await searchRecipes(trimmed, 5);
-
-      if (!active) return;
-
-      setSuggestions(data);
-      setCache(key, data);
-    };
-
-    const timeout = setTimeout(fetchSuggestions, 400);
-
-    return () => {
-      active = false;
-      clearTimeout(timeout);
-    };
-  }, [query]);
 
   const handleSelect = (title) => {
     setQuery('');
-    setSuggestions([]);
-    navigate(`/results?query=${encodeURIComponent(title)}`);
+    navigate(`/results?query=${encodeURIComponent(title.trim())}`);
   };
 
   return (
@@ -80,21 +38,28 @@ function SearchBar() {
 
         {query && (
           <button type="button" className="clear-btn" onClick={clearSearch}>
-            <i className="fa-solid fa-xmark"></i>
+            ✕
           </button>
         )}
+
 
         <button type="submit" className="search-btn">
           Search
         </button>
 
-        {suggestions.length > 0 && (
+        {(loading || suggestions.length > 0) && (
           <ul className="suggestions">
-            {suggestions.map((item) => (
-              <li key={item.id} onClick={() => handleSelect(item.title)}>
-                {item.title}
+            {loading ? (
+              <li className="loading-item">
+                <div className="mini-loader"></div>
               </li>
-            ))}
+            ) : (
+              suggestions.map((item) => (
+                <li key={item.id} onClick={() => handleSelect(item.title)}>
+                  {item.title}
+                </li>
+              ))
+            )}
           </ul>
         )}
       </form>

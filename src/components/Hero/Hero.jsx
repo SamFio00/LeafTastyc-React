@@ -4,20 +4,24 @@ import "./Hero.scss";
 
 const Hero = () => {
     const handleScroll = () => {
-        document.getElementById("ideas").scrollIntoView ({ behavior: "smooth" });
+        const el = document.getElementById("ideas");
+        el?.scrollIntoView({ behavior: "smooth" });
     };
     return (
-        <div className="hero">
+        <section className="hero">
             <div className="hero-overlay"></div>
             <div className="hero-content">
                 <img src={logo} alt="LeafTastyc Logo" />
-                <SearchBar className="search-bar-hero" />
+                <SearchBar />
             </div>
                 
-                <button className="hero-scroll-btn" onClick={handleScroll}>
+                <button 
+                    className="hero-scroll-btn"
+                    aria-label="Scroll to ideas section" 
+                    onClick={handleScroll}>
                     <i className="fa-regular fa-lightbulb"></i>
                 </button>
-        </div>
+        </section>
     );
 };
 

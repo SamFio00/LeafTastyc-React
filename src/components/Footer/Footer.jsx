@@ -1,7 +1,7 @@
 import '../Footer/Footer.scss'
 const Footer = () => {
     return (
-    <div className="credits">
+    <footer className="credits">
       <div className="socials">
         <a
           href="https://github.com/SamFio00"
@@ -31,7 +31,7 @@ const Footer = () => {
         </a>
       </div>
       <p>©2026 Samuele Fiorini. All rights reserved.</p>
-    </div>
+    </footer>
     );
 }
 
