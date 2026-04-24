@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://leaftastyc.netlify.app/" target="_blank">
-    <img src="https://image.thum.io/get/width/900/https://leaftastyc.netlify.app" alt="LeafTastyc Preview" />
+    <img src="src/assets/icons/logo.svg" width="500" alt="LeafTastyc logo" />
   </a>
 </p>
 
