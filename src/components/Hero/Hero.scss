@@ -1,0 +1,107 @@
+@use '../../styles/_variables.scss' as *;
+
+.hero {
+  position: relative;
+  height: 100vh;
+  background-color: #111; /* Fallback color */
+  background-image: url('../../assets/images/hero1.jpg');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.699);
+    z-index: 1;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0 2rem;
+    width: 100%;
+  }
+  
+  .hero-scroll-btn {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background-color: $main-color;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    transition: all 0.3s ease;
+    animation: bounce 1.5s infinite;
+  }
+
+  .hero-scroll-btn:hover {
+    transform: translateX(-50%) translateY(-3px);
+  }
+
+  @keyframes bounce {
+    0%, 100% {
+      transform: translate(-50%, 0);
+    }
+    50% {
+      transform: translate(-50%, 8px);
+    }
+  }
+
+}
+
+
+@media (max-width: 768px) {
+  .hero {
+    height: 100vh;
+
+    .hero-content {
+      align-items: center;
+      padding: 0 1rem;
+
+      img {
+        transform: scale(0.7);
+        margin-bottom: 1.5rem;
+      }
+    }
+
+    .search-bar-hero {
+      max-width: 600px;
+      justify-content: center;
+
+      input, button {
+        font-size: 1.1rem;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    .hero-content{
+      transform: translateY(-80px);
+      align-items: center;
+      padding: 0 1rem;
+
+      img {
+        transform: scale(0.5);
+        margin-bottom: 0.5rem;
+      }
+    }
+    
+  }
+}
