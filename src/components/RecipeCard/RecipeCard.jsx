@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import fakeRecipe from '../../assets/images/fake-recipe.jpg';
 import './RecipeCard.scss';
 
 function RecipeCard({ recipe }) {
@@ -15,7 +16,7 @@ function RecipeCard({ recipe }) {
   return (
     <div className="recipe-card" onClick={goToDetails}>
       <img
-        src={recipe.image || '/fake-recipe.jpg'}
+        src={recipe.image || fakeRecipe }
         alt={recipe.title}
       />
 

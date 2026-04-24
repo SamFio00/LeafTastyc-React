@@ -34,6 +34,9 @@ const RecipeDetails = () => {
         <div className="error-recipe-details">
           <i className="fa-solid fa-triangle-exclamation"></i>
           <p>Recipe details failed to load</p>
+          <button className="back-btn-fail" onClick={() => window.history.back()}>
+            <i className="fa-solid fa-arrow-left"></i>
+          </button>
         </div>
       </>
     );
@@ -61,20 +64,20 @@ const RecipeDetails = () => {
             </span>
 
             <span>
-              <i className="fa-solid fa-clock"></i>{" "}
+              <i className="fa-solid fa-clock"></i> {" "}
               {recipe.readyInMinutes} min
             </span>
 
             {recipe.pricePerServing && (
               <span>
-                <i className="fa-solid fa-coins"></i>{" "}
+                <i className="fa-solid fa-coins"></i> {" "}
                 {(recipe.pricePerServing / 100).toFixed(2)}€
               </span>
             )}
 
             {recipe.spoonacularScore && (
               <span>
-                <i className="fa-solid fa-star"></i>{" "}
+                <i className="fa-solid fa-star"></i> {" "}
                 {Math.round(recipe.spoonacularScore)}
               </span>
             )}
