@@ -3,6 +3,8 @@ import logo from "../../assets/icons/logo.svg";
 import "./Hero.scss";
 
 const Hero = () => {
+
+    // Scroll to ideas section
     const handleScroll = () => {
         const el = document.getElementById("ideas");
         el?.scrollIntoView({ behavior: "smooth" });
