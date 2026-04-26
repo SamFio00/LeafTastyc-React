@@ -1,10 +1,10 @@
-<p align="center">
+<p>
   <a href="https://leaftastyc.netlify.app/" target="_blank">
     <img src="src/assets/icons/logo.svg" width="500" alt="LeafTastyc logo" />
   </a>
 </p>
 
-<p align="center">
+<p>
   <img src="https://img.shields.io/badge/React-19.x-61DAFB?style=for-the-badge&logo=react&logoColor=black" />
   <img src="https://img.shields.io/badge/Vite-8.x-646CFF?style=for-the-badge&logo=vite&logoColor=white" />
   <img src="https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
