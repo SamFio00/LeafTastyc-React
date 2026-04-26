@@ -5,10 +5,12 @@ import './RecipeCard.scss';
 function RecipeCard({ recipe }) {
   const navigate = useNavigate();
 
+  // Function to navigate to recipe details
   const goToDetails = () => {
     navigate(`/recipe-details/${recipe.id}`);
   };
 
+  // Clean the recipe summary txt
   const cleanText = recipe.summary?.replace(/<[^>]+>/g, '');
 
   const description = cleanText;
