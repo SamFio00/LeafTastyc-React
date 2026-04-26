@@ -1,0 +1,70 @@
+@use '../../styles/_variables.scss' as *;
+
+.results {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    text-align: left;
+
+    h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .loader {
+      width: 50px;
+      height: 50px;
+      margin: 80px auto;
+      border: 5px solid rgba(0, 0, 0, 0.08);
+      border-top: 4px solid $main-color;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .results-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .no-results {
+      max-width: 600px;
+      background-color: $err-bg-color;
+      padding: 1rem;
+      border-radius: 5px;
+      color: $secondary-color;
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .load-more {
+      margin: 2rem auto;
+      display: block;
+      text-align: center;
+      padding: 0.7rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      background-color: transparent;
+      color: $link-text-color;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        color: $main-color;
+      }
+    }
+
+    .end-message {
+      margin: 1rem auto;
+      text-align: center;
+      font-size: 1.25rem;
+      color: $secondary-color;
+    }
+}
