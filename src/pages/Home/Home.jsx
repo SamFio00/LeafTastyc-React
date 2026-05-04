@@ -15,7 +15,11 @@ function Home() {
 
       {error && (
         <div className="error-banner">
-          <p><i className="fa-solid fa-triangle-exclamation"></i> {error}</p>
+          <p>
+          <i className="fa-solid fa-triangle-exclamation"></i> {""}
+          {error}
+          {recipes.length > 0 && " Showing available data."} 
+          </p>
         </div>
       )}
 
