@@ -32,7 +32,7 @@ useEffect(() => {
       setCache("last-recipes", recipesData);
     } catch {
 
-      setError("Unable to load recipes. Showing cached results.");
+      setError("Unable to load latest recipes. Showing available data");
 
       const fallback = getCache(CACHE_KEY, CACHE_TIME * 10);
       const lastGood = getCache("last-recipes", CACHE_TIME * 24);
