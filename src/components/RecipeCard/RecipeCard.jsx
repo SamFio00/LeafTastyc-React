@@ -10,13 +10,10 @@ function RecipeCard({ recipe }) {
     navigate(`/recipe-details/${recipe.id}`);
   };
 
-  // Clean the recipe summary txt
-  const cleanText = recipe.summary?.replace(/<[^>]+>/g, '');
-
-  const description = cleanText;
+  const description = recipe.summary?.replace(/<[^>]+>/g, '');
 
   return (
-    <div className="recipe-card" onClick={goToDetails}>
+    <div className="recipe-card">
       <img
         src={recipe.image || fakeRecipe }
         alt={recipe.title}
@@ -29,10 +26,7 @@ function RecipeCard({ recipe }) {
           {description || 'No description available.'}
         </p>
 
-        <button onClick={(e) => {
-          e.stopPropagation();
-          goToDetails();
-        }}>
+        <button onClick={goToDetails}>
           See Details →
         </button>
       </div>

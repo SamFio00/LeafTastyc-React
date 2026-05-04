@@ -8,33 +8,38 @@ export const useRecipeDetails = (id) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!id) return;
+    if (!id) {
+      setRecipe(null);
+      setLoading(false);
+      setError(null);
+      return;
+    }
 
     const fetchData = async () => {
       const CACHE_KEY = `recipe_${id}`;
       const CACHE_TIME = 60 * 60 * 1000 * 24;
 
+      setLoading(true);
+      setError(null);
+
+      const cached = getCache(CACHE_KEY, CACHE_TIME);
+
+
+      if (cached) {
+        setRecipe(cached);
+        setLoading(false);
+        return;
+      }
+
       try {
-        setLoading(true);
-        setError(null);
-
-        const cached = getCache(CACHE_KEY, CACHE_TIME);
-
-        if (cached) {
-          setRecipe(cached);
-          setLoading(false);
-          return;
-        }
-
         const data = await getRecipeDetails(id);
 
         if (!data) throw new Error("No data");
 
         setRecipe(data);
         setCache(CACHE_KEY, data);
-      } catch (err) {
-        console.error(err);
-        setError(true);
+      } catch {
+        setError("Failed to load recipe details.");
       } finally {
         setLoading(false);
       }

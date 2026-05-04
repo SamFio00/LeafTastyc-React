@@ -23,7 +23,7 @@ export const searchRecipes = async (query, number = 10, offset = 0) => {
     return data.results || [];
   } catch (error) {
     console.error('Search error:', error);
-    return [];
+    throw error;
   }
 };
 
@@ -40,7 +40,7 @@ export const getSuggestions = async (query) => {
     return data || [];
   } catch (error) {
     console.error('Suggestions error:', error);
-    return [];
+    throw error;
   }
 };
 
@@ -51,7 +51,7 @@ export const getRecipeDetails = async (id) => {
     return data;
   } catch (error) {
     console.error('Details error:', error);
-    return null;
+    throw error;
   }
 };
 
@@ -68,6 +68,6 @@ export const getRandomRecipes = async () => {
     return data.recipes || [];
   } catch (error) {
     console.error('Random error:', error);
-    return [];
+    throw error;
   }
 };

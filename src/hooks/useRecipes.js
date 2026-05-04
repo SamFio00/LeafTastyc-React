@@ -8,6 +8,7 @@ export const useRecipes = (query) => {
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!query) return;
@@ -16,26 +17,34 @@ export const useRecipes = (query) => {
       const CACHE_KEY = `results_${query}_0`;
       const CACHE_TIME = 60 * 60 * 1000;
 
+      setLoading(true);
+      setError(null);
+
       const cached = getCache(CACHE_KEY, CACHE_TIME);
 
       if (cached) {
         setRecipes(cached);
         setOffset(10);
         setHasMore(cached.length >= 10);
+        setLoading(false);
         return;
       }
 
-      setLoading(true);
+      try {
+        const results = await searchRecipes(query, 10, 0);
 
-      const results = await searchRecipes(query, 10, 0);
+        setRecipes(results);
+        setOffset(10);
+        setHasMore(results.length >= 10);
 
-      setRecipes(results);
-      setOffset(10);
-      setHasMore(results.length >= 10);
-
-      setCache(CACHE_KEY, results);
-
-      setLoading(false);
+        setCache(CACHE_KEY, results);
+      } catch {
+        setError("Failed to load recipes.");
+        setRecipes([]);
+        setHasMore(false);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchRecipes();
@@ -45,26 +54,31 @@ export const useRecipes = (query) => {
     const CACHE_KEY = `results_${query}_${offset}`;
     const CACHE_TIME = 60 * 60 * 1000;
 
+    setLoadingMore(true);
+
     const cached = getCache(CACHE_KEY, CACHE_TIME);
 
     if (cached) {
       setRecipes((prev) => [...prev, ...cached]);
       setOffset((prev) => prev + 10);
       setHasMore(cached.length >= 10);
+      setLoadingMore(false);
       return;
     }
 
-    setLoadingMore(true);
+    try {
+      const moreRecipes = await searchRecipes(query, 10, offset);
 
-    const moreRecipes = await searchRecipes(query, 10, offset);
+      setRecipes((prev) => [...prev, ...moreRecipes]);
+      setOffset((prev) => prev + 10);
+      setHasMore(moreRecipes.length >= 10);
 
-    setRecipes((prev) => [...prev, ...moreRecipes]);
-    setOffset((prev) => prev + 10);
-    setHasMore(moreRecipes.length >= 10);
-
-    setCache(CACHE_KEY, moreRecipes);
-
-    setLoadingMore(false);
+      setCache(CACHE_KEY, moreRecipes);
+    } catch {
+      setError("Failed to load more recipes.");
+    } finally {
+      setLoadingMore(false);
+    }
   };
 
   return {
@@ -73,5 +87,6 @@ export const useRecipes = (query) => {
     loadingMore,
     hasMore,
     loadMore,
+    error,
   };
 };

@@ -8,37 +8,46 @@ const CACHE_TIME = 60 * 60 * 1000;
 export const useRandomRecipes = () => {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchRecipes = async () => {
-      setLoading(true);
+useEffect(() => {
+  const fetchRecipes = async () => {
+    setLoading(true);
+    setError(null);
 
-      const cached = getCache(CACHE_KEY, CACHE_TIME);
+    const cached = getCache(CACHE_KEY, CACHE_TIME);
 
-      if (cached) {
-        setRecipes(cached);
-        setLoading(false);
-        return;
-      }
+    if (cached) {
+      setRecipes(cached);
+    }
 
-      try {
-        const data = await getRandomRecipes();
+    try {
 
-        setRecipes(data || []);
-        setCache(CACHE_KEY, data || []);
-        setCache("last-recipes", data || []);
-      } catch {
-        const fallback = getCache(CACHE_KEY, CACHE_TIME * 10);
-        const lastGood = getCache("last-recipes", CACHE_TIME * 24);
+      const data = await getRandomRecipes();
 
+      const recipesData = data || [];
+
+      setRecipes(recipesData);
+      setCache(CACHE_KEY, recipesData);
+      setCache("last-recipes", recipesData);
+    } catch {
+
+      setError("Unable to load recipes. Showing cached results.");
+
+      const fallback = getCache(CACHE_KEY, CACHE_TIME * 10);
+      const lastGood = getCache("last-recipes", CACHE_TIME * 24);
+
+
+      if (!cached) {
         setRecipes(fallback || lastGood || []);
-      } finally {
-        setLoading(false);
       }
-    };
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchRecipes();
-  }, []);
+  fetchRecipes();
+}, []);
 
-  return { recipes, loading };
+  return { recipes, loading, error };
 };

@@ -5,6 +5,7 @@ import { getCache, setCache } from "../utils/cache";
 export const useDebouncedSearch = (query) => {
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     let active = true;
@@ -16,6 +17,7 @@ export const useDebouncedSearch = (query) => {
         if (active) {
           setSuggestions([]);
           setLoading(false);
+          setError(null);
         }
         return;
       }
@@ -28,11 +30,13 @@ export const useDebouncedSearch = (query) => {
       if (cached && active) {
         setSuggestions(cached);
         setLoading(false);
+        setError(null);
         return;
       }
 
       try {
         setLoading(true);
+        setError(null);
 
         const data = await getSuggestions(trimmed);
 
@@ -43,7 +47,10 @@ export const useDebouncedSearch = (query) => {
         setSuggestions(results);
         setCache(key, results);
       } catch {
-        if (active) setSuggestions([]);
+        if (!active) return;
+
+        setSuggestions([]);
+        setError("Error loading suggestions");
       } finally {
         if (active) setLoading(false);
       }
@@ -55,5 +62,5 @@ export const useDebouncedSearch = (query) => {
     };
   }, [query]);
 
-  return { suggestions, loading };
+  return { suggestions, loading, error };
 };
