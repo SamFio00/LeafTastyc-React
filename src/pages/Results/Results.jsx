@@ -15,6 +15,7 @@ function Results() {
     loadingMore,
     hasMore,
     loadMore,
+    error,
   } = useRecipes(query);
 
   return (
@@ -22,31 +23,40 @@ function Results() {
       <Navbar />
 
       <div className="results">
-        <h2>Results for: <em>{query}</em></h2>
+        <h2>
+          Results for: <em>{query}</em>
+        </h2>
+
+        {error && (
+          <div className="no-results">
+            <i className="fa-solid fa-triangle-exclamation"></i>
+            <p>{error}</p>
+          </div>
+        )}
 
         <div className="results-list">
           {loading ? (
             <div className="loader"></div>
-          ) : recipes.length > 0 ? (
+          ) : !error && recipes.length > 0 ? (
             recipes.map((recipe) => (
               <RecipeCard key={recipe.id} recipe={recipe} />
             ))
-          ) : (
+          ) : !error ? (
             <div className="no-results">
-              <i className="fa-solid fa-triangle-exclamation"></i>
+              <i className="fa-solid fa-circle-info"></i>
               <p>No recipes found.</p>
             </div>
-          )}
+          ) : null}
         </div>
 
-        {!loading && recipes.length > 0 && hasMore && (
+        {!loading && !error && recipes.length > 0 && hasMore && (
           <button
             className="load-more"
             onClick={loadMore}
             disabled={loadingMore}
           >
             {loadingMore ? (
-              'Loading...'
+              "Loading..."
             ) : (
               <>
                 Load more <i className="fa-solid fa-arrow-down"></i>
@@ -55,7 +65,7 @@ function Results() {
           </button>
         )}
 
-        {!hasMore && !loading && recipes.length > 0 && (
+        {!hasMore && !loading && recipes.length > 0 && !error && (
           <h2 className="end-message">No more recipes</h2>
         )}
       </div>

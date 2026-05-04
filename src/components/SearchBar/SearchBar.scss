@@ -88,6 +88,13 @@
   animation: spin 0.6s linear infinite;
 }
 
+.error-item {
+  font-size: 0.9rem;
+  padding: 0.8rem 1rem;
+  color: $link-text-color;
+  background-color: $err-bg-color;
+}
+
 .suggestions {
   position: absolute;
   top: calc(100% + 5px);

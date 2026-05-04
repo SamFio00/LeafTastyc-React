@@ -6,7 +6,7 @@ import { useDebouncedSearch } from '../../hooks/useDebouncedSearch';
 function SearchBar() {
   const [query, setQuery] = useState('');
 
-  const { suggestions, loading } = useDebouncedSearch(query);
+  const { suggestions, loading, error } = useDebouncedSearch(query);
 
   const navigate = useNavigate();
 
@@ -47,12 +47,14 @@ function SearchBar() {
           Search
         </button>
 
-        {(loading || suggestions.length > 0) && (
+        {(loading || suggestions.length > 0 || error) && (
           <ul className="suggestions">
             {loading ? (
               <li className="loading-item">
                 <div className="mini-loader"></div>
               </li>
+            ) : error ? (
+              <li className="error-item">{error}</li>
             ) : (
               suggestions.map((item) => (
                 <li key={item.id} onClick={() => handleSelect(item.title)}>

@@ -39,6 +39,16 @@
     gap: 1.5rem;
   }
 
+  .error-banner {
+    background-color: $err-bg-color;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    margin: 1rem;
+    color: $secondary-color;
+  }
+
   .empty-state {
     grid-column: 1 / -1;
     text-align: center;

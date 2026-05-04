@@ -11,10 +11,10 @@ const RecipeDetails = () => {
 
   const [checkedItems, setCheckedItems] = useState({});
 
-  const toggleItem = (id) => {
+  const toggleItem = (ingredientId) => {
     setCheckedItems((prev) => ({
       ...prev,
-      [id]: !prev[id],
+      [ingredientId]: !prev[ingredientId],
     }));
   };
 
@@ -33,7 +33,7 @@ const RecipeDetails = () => {
         <Navbar />
         <div className="error-recipe-details">
           <i className="fa-solid fa-triangle-exclamation"></i>
-          <p>Recipe details failed to load</p>
+          <p>{error || "Recipe not found."}</p>
           <button className="back-btn-fail" onClick={() => window.history.back()}>
             <i className="fa-solid fa-arrow-left"></i>
           </button>
@@ -171,7 +171,7 @@ const RecipeDetails = () => {
           <div
             className="instructions-content"
             dangerouslySetInnerHTML={{
-              __html: recipe.instructions,
+              __html: recipe.instructions || "No instructions available.",
             }}
           />
         </div>
